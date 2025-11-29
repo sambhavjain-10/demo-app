@@ -34,8 +34,8 @@ const DashboardPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const { teamMetrics, userPerformance } = useAnalytics();
-  const resolvedTeamMetrics = teamMetrics.data ?? [];
-  const resolvedUserPerformance = userPerformance.data ?? [];
+  const teamMetricsData = teamMetrics.data ?? [];
+  const userPerformanceData = userPerformance.data ?? [];
   const [teamMemberOrder, setTeamMemberOrder] = useState<Partial<Record<DepartmentKey, string[]>>>(
     {}
   );
@@ -46,11 +46,14 @@ const DashboardPage = () => {
     setSelectedUserId(userIdParam);
   }, [userIdParam]);
 
-  const selectedUser = resolvedUserPerformance.find((user) => user.user_id === selectedUserId);
-  const isUserPerformanceLoading = userPerformance.isLoading && !userPerformance.data;
+  const selectedUser = useMemo(
+    () => userPerformanceData.find((user) => user.user_id === selectedUserId),
+    [selectedUserId, userPerformanceData]
+  );
+  const isUserPerformanceLoading = userPerformance.isLoading && userPerformanceData.length === 0;
 
   const activeTeamKey = TEAM_NAME_MAP[activeTab];
-  const activeTeamMetric = resolvedTeamMetrics.find((metric) => metric.team === activeTeamKey) ?? {
+  const activeTeamMetric = teamMetricsData.find((metric) => metric.team === activeTeamKey) ?? {
     total_sessions: 0,
     avg_score: 0,
     avg_confidence: 0,
@@ -72,29 +75,29 @@ const DashboardPage = () => {
 
   const usersForTab = useMemo(() => {
     const normalizedSearch = searchTerm.toLowerCase().trim();
-    const filteredMembers = resolvedUserPerformance.filter(
+    const filteredMembers = userPerformanceData.filter(
       (user) =>
         user.team === activeTeamKey && user.first_name.toLowerCase().includes(normalizedSearch)
     );
     return orderMembersByIds(filteredMembers, teamMemberOrder[activeTab]);
-  }, [activeTeamKey, resolvedUserPerformance, searchTerm, teamMemberOrder, activeTab]);
+  }, [activeTeamKey, userPerformanceData, searchTerm, teamMemberOrder, activeTab]);
 
   const topPerformers = useMemo(
     () =>
-      [...resolvedUserPerformance]
+      [...userPerformanceData]
         .filter((user) => user.team === activeTeamKey)
         .sort((a, b) => b.avg_score - a.avg_score)
         .slice(0, 3),
-    [activeTeamKey, resolvedUserPerformance]
+    [activeTeamKey, userPerformanceData]
   );
 
   const tabsWithCounts = useMemo(
     () =>
       TAB_OPTIONS.map((tab) => ({
         ...tab,
-        count: resolvedUserPerformance.filter((user) => user.team === TEAM_NAME_MAP[tab.id]).length,
+        count: userPerformanceData.filter((user) => user.team === TEAM_NAME_MAP[tab.id]).length,
       })),
-    [resolvedUserPerformance]
+    [userPerformanceData]
   );
 
   const isUserInfoLoading = userPerformance.isLoading && Boolean(selectedUserId) && !selectedUser;
@@ -102,7 +105,7 @@ const DashboardPage = () => {
   const userPerformanceError = userPerformance.isError;
 
   const handleReorderMembers = useCallback(
-    (nextMembers: (typeof resolvedUserPerformance)[number][]) => {
+    (nextMembers: (typeof userPerformanceData)[number][]) => {
       setTeamMemberOrder((prev) => ({
         ...prev,
         [activeTab]: nextMembers.map((member) => member.user_id),
@@ -111,7 +114,7 @@ const DashboardPage = () => {
     [activeTab]
   );
 
-  const handleUserClick = (user: (typeof resolvedUserPerformance)[number]) => {
+  const handleUserClick = (user: (typeof userPerformanceData)[number]) => {
     const next = new URLSearchParams(searchParams);
     next.set("userId", user.user_id);
     setSearchParams(next, { replace: true });
