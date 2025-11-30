@@ -57,37 +57,34 @@ const Feedback = ({ sessionId, feedback, isLoading, isError, onRetry }: Feedback
 
     if (trimmedFeedback === originalFeedback) return;
 
+    // Cancel any outgoing refetches to avoid overwriting optimistic update
+    queryClient.cancelQueries({ queryKey: [SESSION_DETAILS_QUERY_KEY, sessionId] });
+
+    // Snapshot the previous value
+    const previousData = queryClient.getQueryData([SESSION_DETAILS_QUERY_KEY, sessionId]);
+
+    // Optimistically update to the new value
+    queryClient.setQueryData([SESSION_DETAILS_QUERY_KEY, sessionId], (old: any) => {
+      if (!old) return old;
+      return {
+        ...old,
+        feedback: trimmedFeedback,
+      };
+    });
+
     bulkUpdateMutation.mutate(
       {
         session_ids: [sessionId],
         feedback: trimmedFeedback,
       },
       {
-        onMutate: async () => {
-          // Cancel any outgoing refetches to avoid overwriting optimistic update
-          await queryClient.cancelQueries({ queryKey: [SESSION_DETAILS_QUERY_KEY, sessionId] });
-
-          // Snapshot the previous value
-          const previousData = queryClient.getQueryData([SESSION_DETAILS_QUERY_KEY, sessionId]);
-
-          // Optimistically update to the new value
-          queryClient.setQueryData([SESSION_DETAILS_QUERY_KEY, sessionId], (old: any) => {
-            if (!old) return old;
-            return {
-              ...old,
-              feedback: trimmedFeedback,
-            };
-          });
-          // Return context with the snapshotted value
-          return { previousData };
-        },
         onSuccess: () => {
           showAlert("success", "Feedback updated successfully.");
         },
-        onError: (error, variables, context) => {
+        onError: (error) => {
           // Rollback to the previous value on error
-          if (context?.previousData) {
-            queryClient.setQueryData([SESSION_DETAILS_QUERY_KEY, sessionId], context.previousData);
+          if (previousData) {
+            queryClient.setQueryData([SESSION_DETAILS_QUERY_KEY, sessionId], previousData);
           }
           setIsEditing(true); // Keep in edit mode on error
           showAlert("error", "Failed to update feedback. Please try again.");

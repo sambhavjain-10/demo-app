@@ -21,6 +21,7 @@ export type SessionColumn = {
   label: string;
   minWidth?: number;
   render?: (session: SessionTableRow) => ReactNode;
+  customizable?: boolean;
 };
 
 export type SessionFilters = {
