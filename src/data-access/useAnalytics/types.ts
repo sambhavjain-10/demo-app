@@ -13,3 +13,15 @@ export type UserPerformanceMetric = UserType;
 
 export type TeamMetricsResponse = TeamMetric[];
 export type UserPerformanceResponse = UserPerformanceMetric[];
+
+export type ScoreTrendDataPoint = {
+  date: string;
+  avg_score: number;
+  count: number;
+};
+
+export type ScoreTrendsResponse = ScoreTrendDataPoint[];
+
+export type UseScoreTrendsOptions = {
+  days?: number;
+};

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { TabNav } from "@/components";
-import { useAnalytics } from "@/data-access";
+import { useTeamMetrics, useUserPerformance } from "@/data-access";
 import { TAB_OPTIONS } from "./constants";
 import type { DepartmentKey } from "./types";
 import TeamPerformance from "./components/TeamPerformance/TeamPerformance";
@@ -33,9 +33,10 @@ const DashboardPage = () => {
   const [activeTab, setActiveTab] = useState<DepartmentKey>("sales");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
-  const { teamMetrics, userPerformance } = useAnalytics();
+  const teamMetrics = useTeamMetrics();
+  const userPerformance = useUserPerformance();
   const teamMetricsData = teamMetrics.data ?? [];
-  const userPerformanceData = userPerformance.data ?? [];
+  const userPerformanceData = userPerformance.data ?? []; //eslint-disable-line
   const [teamMemberOrder, setTeamMemberOrder] = useState<Partial<Record<DepartmentKey, string[]>>>(
     {}
   );

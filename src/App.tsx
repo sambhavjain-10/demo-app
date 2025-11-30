@@ -3,6 +3,7 @@ import { Sidebar, Alerts } from "@/components";
 import { AlertsProvider } from "@/context/AlertsContext";
 import DashboardPage from "./pages/Dashboard/Dashboard";
 import SessionsPage from "./pages/Sessions/Sessions";
+import ScoreTrendsPage from "./pages/ScoreTrends/ScoreTrends";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/sessions" element={<SessionsPage />} />
+            <Route path="/score-trends" element={<ScoreTrendsPage />} />
           </Routes>
         </main>
         <Alerts />
