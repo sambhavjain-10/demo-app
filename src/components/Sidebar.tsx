@@ -24,27 +24,28 @@ const linkClasses = ({ isActive }: { isActive: boolean }) =>
   ].join(" ");
 
 /**
- * A sidebar navigation component with icon-based links and theme toggle.
+ * A responsive sidebar navigation component with icon-based links and theme toggle.
  *
  * @component
  * @description
- * Displays a vertical sidebar with navigation links to different pages
- * and a theme toggle button at the bottom. Navigation links are highlighted
- * when active, and the component uses React Router's NavLink for routing.
+ * Displays a navigation bar with links to different pages and a theme toggle button.
+ * On mobile devices (small screens), it appears as a horizontal bar fixed at the bottom.
+ * On desktop (medium screens and up), it displays as a vertical sidebar on the left.
+ * Navigation links are highlighted when active, and the component uses React Router's NavLink for routing.
  *
  * @example
  * // Typically used in the main app layout
  * <Sidebar />
  *
- * @returns {JSX.Element} A sidebar navigation component with theme toggle
+ * @returns {JSX.Element} A responsive sidebar navigation component with theme toggle
  */
 const Sidebar = () => {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
 
   return (
-    <aside className="h-full flex w-20 flex-col items-center rounded-3xl bg-white/80 py-6 shadow-lg shadow-blue-500/10 backdrop-blur dark:bg-gray-800/80">
-      <nav className="flex flex-1 flex-col items-center gap-4">
+    <aside className="fixed bottom-0 left-0 right-0 z-40 flex h-16 w-full flex-row items-center justify-around rounded-t-3xl bg-white/80 py-2 shadow-lg shadow-blue-500/10 backdrop-blur dark:bg-gray-800/80 md:relative md:bottom-auto md:left-auto md:right-auto md:z-auto md:h-full md:w-20 md:flex-col md:items-center md:justify-start md:rounded-3xl md:py-6">
+      <nav className="flex flex-row items-center gap-2 md:flex-1 md:flex-col md:items-center md:gap-4">
         {links.map(({ to, label, Icon }) => (
           <NavLink
             key={to}
