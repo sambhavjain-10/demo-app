@@ -8,3 +8,5 @@ export { default as Modal } from "./Modal/Modal";
 export { default as ErrorState } from "./ErrorState/ErrorState";
 export { default as Checkbox } from "./Checkbox/Checkbox";
 export { default as Alerts } from "./Alerts/Alerts";
+export { default as Select } from "./Select/Select";
+export type { SelectOption, SelectProps } from "./Select/types";

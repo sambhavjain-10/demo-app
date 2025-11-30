@@ -5,6 +5,52 @@ import Button from "../Button/Button";
 import { Close as CloseIcon } from "@/icons";
 import type { ModalProps } from "./types";
 
+/**
+ * A modal dialog component that renders in a portal with backdrop and keyboard support.
+ *
+ * @component
+ * @example
+ * // Basic modal
+ * <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Confirm Action">
+ *   <p>Are you sure you want to proceed?</p>
+ * </Modal>
+ *
+ * @example
+ * // Modal with footer
+ * <Modal
+ *   isOpen={isOpen}
+ *   onClose={() => setIsOpen(false)}
+ *   title="Settings"
+ *   footer={
+ *     <div className="flex justify-end gap-2">
+ *       <Button onClick={() => setIsOpen(false)}>Cancel</Button>
+ *       <Button onClick={handleSave}>Save</Button>
+ *     </div>
+ *   }
+ * >
+ *   <SettingsForm />
+ * </Modal>
+ *
+ * @example
+ * // Modal without close button
+ * <Modal
+ *   isOpen={isOpen}
+ *   onClose={() => setIsOpen(false)}
+ *   showCloseButton={false}
+ * >
+ *   <CustomCloseHandler />
+ * </Modal>
+ *
+ * @param {ModalProps} props - The component props
+ * @param {boolean} props.isOpen - Controls the visibility of the modal
+ * @param {() => void} props.onClose - Callback function called when modal should close (ESC key or backdrop click)
+ * @param {ReactNode} [props.title] - Optional title displayed at the top of the modal
+ * @param {ReactNode} props.children - The main content of the modal
+ * @param {ReactNode} [props.footer] - Optional footer content displayed at the bottom
+ * @param {boolean} [props.showCloseButton=true] - Whether to show the close button in the header
+ * @param {string} [props.className=""] - Additional CSS classes for the modal container
+ * @returns {JSX.Element | null} The modal component or null if not open
+ */
 const Modal = ({
   isOpen,
   onClose,
@@ -38,7 +84,7 @@ const Modal = ({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
     >

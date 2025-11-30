@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import {
   Dashboard as DashboardIcon,
   Sessions as SessionsIcon,
+  ScoreTrends as ScoreTrendsIcon,
   Sun as SunIcon,
   Moon as MoonIcon,
 } from "@/icons";
@@ -11,6 +12,7 @@ import { Button } from "@/components";
 const links = [
   { to: "/dashboard", label: "Dashboard", Icon: DashboardIcon },
   { to: "/sessions", label: "Sessions", Icon: SessionsIcon },
+  { to: "/score-trends", label: "Score Trends", Icon: ScoreTrendsIcon },
 ];
 
 const linkClasses = ({ isActive }: { isActive: boolean }) =>
@@ -21,6 +23,21 @@ const linkClasses = ({ isActive }: { isActive: boolean }) =>
       : "text-gray-500 dark:text-gray-300 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-gray-700",
   ].join(" ");
 
+/**
+ * A sidebar navigation component with icon-based links and theme toggle.
+ *
+ * @component
+ * @description
+ * Displays a vertical sidebar with navigation links to different pages
+ * and a theme toggle button at the bottom. Navigation links are highlighted
+ * when active, and the component uses React Router's NavLink for routing.
+ *
+ * @example
+ * // Typically used in the main app layout
+ * <Sidebar />
+ *
+ * @returns {JSX.Element} A sidebar navigation component with theme toggle
+ */
 const Sidebar = () => {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";

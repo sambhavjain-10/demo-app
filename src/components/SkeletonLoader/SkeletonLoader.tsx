@@ -1,6 +1,32 @@
 import { twMerge } from "tailwind-merge";
 import type { SkeletonLoaderProps } from "./types";
 
+/**
+ * A skeleton loading component that displays animated placeholder lines.
+ *
+ * @component
+ * @example
+ * // Single skeleton line
+ * <SkeletonLoader />
+ *
+ * @example
+ * // Multiple skeleton lines
+ * <SkeletonLoader lines={5} />
+ *
+ * @example
+ * // Custom styling
+ * <SkeletonLoader
+ *   lines={3}
+ *   wrapperClassName="space-y-4"
+ *   loaderClassName="h-6 rounded-lg"
+ * />
+ *
+ * @param {SkeletonLoaderProps} props - The component props
+ * @param {number} [props.lines=1] - Number of skeleton lines to display
+ * @param {string} [props.wrapperClassName=""] - Additional CSS classes for the wrapper container
+ * @param {string} [props.loaderClassName=""] - Additional CSS classes for each skeleton line
+ * @returns {JSX.Element} A skeleton loading component with animated placeholders
+ */
 const SkeletonLoader = ({
   lines = 1,
   wrapperClassName = "",
@@ -8,7 +34,7 @@ const SkeletonLoader = ({
 }: SkeletonLoaderProps) => {
   const mergedWrapperClassName = twMerge("space-y-2", wrapperClassName);
   const mergedLoaderClassName = twMerge(
-    "h-4 w-full animate-pulse rounded-full bg-gray-200 dark:bg-gray-700",
+    "h-10 w-full animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700",
     loaderClassName
   );
   return (

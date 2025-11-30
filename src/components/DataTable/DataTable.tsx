@@ -9,6 +9,69 @@ const cellAlignment = (align?: "left" | "center" | "right") => {
   return "text-left";
 };
 
+/**
+ * A feature-rich data table component with loading states, error handling, drag-and-drop reordering, and row click support.
+ *
+ * @component
+ * @template T - The type of data rows (must be an object/record)
+ *
+ * @example
+ * // Basic table
+ * <DataTable
+ *   columns={[
+ *     { key: "name", label: "Name" },
+ *     { key: "email", label: "Email" }
+ *   ]}
+ *   data={users}
+ *   getRowKey={(row) => row.id}
+ * />
+ *
+ * @example
+ * // Table with custom rendering and click handler
+ * <DataTable
+ *   columns={[
+ *     {
+ *       key: "name",
+ *       label: "Name",
+ *       render: (row) => <strong>{row.name}</strong>
+ *     },
+ *     { key: "score", label: "Score", align: "right" }
+ *   ]}
+ *   data={sessions}
+ *   getRowKey={(row) => row.id}
+ *   onRowClick={(row) => openDetails(row)}
+ *   loading={isLoading}
+ * />
+ *
+ * @example
+ * // Table with drag-and-drop reordering
+ * <DataTable
+ *   columns={columns}
+ *   data={items}
+ *   getRowKey={(row) => row.id}
+ *   enableDrag={true}
+ *   onReorder={(sourceIndex, targetIndex) => {
+ *     // Handle reorder logic
+ *   }}
+ * />
+ *
+ * @param {DataTableProps<T>} props - The component props
+ * @param {TableColumn<T>[]} props.columns - Column definitions with keys, labels, and optional render functions
+ * @param {T[]} props.data - Array of data rows to display
+ * @param {(row: T) => string | number} props.getRowKey - Function to extract unique key from each row
+ * @param {string} [props.emptyMessage="No data available"] - Message shown when data array is empty
+ * @param {string} [props.className] - Additional CSS classes for the table container
+ * @param {boolean} [props.loading=false] - Whether the table is in loading state
+ * @param {number} [props.loadingRows=3] - Number of skeleton rows to show during loading
+ * @param {(row: T) => void} [props.onRowClick] - Callback fired when a row is clicked (makes rows clickable)
+ * @param {string} [props.rowClassName=""] - Additional CSS classes for table rows
+ * @param {boolean} [props.isError=false] - Whether to show error state
+ * @param {() => void} [props.onRetry] - Callback for retry button in error state
+ * @param {string} [props.errorMessage="Please try again."] - Error message to display
+ * @param {boolean} [props.enableDrag=false] - Enable drag-and-drop reordering of rows
+ * @param {(sourceIndex: number, targetIndex: number) => void} [props.onReorder] - Callback fired when rows are reordered
+ * @returns {JSX.Element} A styled data table with all features
+ */
 const DataTable = <T extends Record<string, unknown>>({
   columns,
   data,

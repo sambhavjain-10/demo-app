@@ -1,5 +1,38 @@
 import type { TabNavProps } from "./types";
 
+/**
+ * A tab navigation component with support for counts and active state management.
+ *
+ * @component
+ * @example
+ * // Basic tabs
+ * <TabNav
+ *   tabs={[
+ *     { id: "all", label: "All" },
+ *     { id: "active", label: "Active" }
+ *   ]}
+ *   activeTab="all"
+ *   onChange={setActiveTab}
+ * />
+ *
+ * @example
+ * // Tabs with counts
+ * <TabNav
+ *   tabs={[
+ *     { id: "all", label: "All", count: 42 },
+ *     { id: "pending", label: "Pending", count: 5 }
+ *   ]}
+ *   activeTab={activeTab}
+ *   onChange={setActiveTab}
+ * />
+ *
+ * @param {TabNavProps} props - The component props
+ * @param {TabItem[]} props.tabs - Array of tab items with id, label, and optional count
+ * @param {string} props.activeTab - The ID of the currently active tab
+ * @param {(tabId: string) => void} props.onChange - Callback fired when a tab is clicked
+ * @param {string} [props.className] - Additional CSS classes for the container
+ * @returns {JSX.Element} A tab navigation component with active state styling
+ */
 const TabNav = ({ tabs, activeTab, onChange, className }: TabNavProps) => {
   return (
     <div

@@ -1,7 +1,33 @@
 import { Button } from "@/components";
 import { useAlerts } from "@/context/AlertsContext";
-import { Close } from "@/icons";
+import { Close, CheckCircle, XCircle } from "@/icons";
 
+/**
+ * A global alerts/toast notification component that displays alerts from the AlertsContext.
+ *
+ * @component
+ * @description
+ * This component automatically displays alerts managed by the AlertsContext.
+ * It supports success and error alert types with optional call-to-action buttons.
+ * Alerts are displayed at the bottom of the screen with enter/exit animations.
+ *
+ * @example
+ * // This component is typically rendered once at the app root level
+ * // Alerts are triggered using the useAlerts hook:
+ *
+ * const { showAlert } = useAlerts();
+ *
+ * // Show success alert
+ * showAlert("success", "Operation completed successfully!");
+ *
+ * // Show error alert with action
+ * showAlert("error", "Failed to save changes.", {
+ *   text: "Retry",
+ *   onClick: () => handleRetry()
+ * });
+ *
+ * @returns {JSX.Element | null} The alerts container or null if no alerts exist
+ */
 const Alerts = () => {
   const { alerts, exitingIds, removeAlert } = useAlerts();
 
@@ -15,8 +41,8 @@ const Alerts = () => {
         const isSuccess = alert.type === "success";
         const isExiting = exitingIds.has(alert.id);
         const bgColor = isSuccess
-          ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-500/10 dark:border-emerald-500/20"
-          : "bg-rose-50 border-rose-200 dark:bg-rose-500/10 dark:border-rose-500/20";
+          ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-500/50 dark:border-emerald-500"
+          : "bg-rose-50 border-rose-200 dark:bg-rose-500/50 dark:border-rose-500";
         const textColor = isSuccess
           ? "text-emerald-700 dark:text-emerald-300"
           : "text-rose-700 dark:text-rose-300";
@@ -32,35 +58,7 @@ const Alerts = () => {
             }`}
           >
             <div className={`shrink-0 ${iconColor}`}>
-              {isSuccess ? (
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              )}
+              {isSuccess ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
             </div>
             <div className={`flex-1 text-sm font-medium ${textColor}`}>{alert.message}</div>
             <div className="flex items-center gap-2">
@@ -80,14 +78,15 @@ const Alerts = () => {
                   {alert.cta.text}
                 </Button>
               )}
-              <button
+              <Button
                 type="button"
+                theme="icon"
                 onClick={() => removeAlert(alert.id)}
-                className={`rounded-full p-1 transition hover:bg-black/10 dark:hover:bg-white/10 ${textColor}`}
+                className={`h-6 w-6 hover:bg-black/10 dark:hover:bg-white/10 ${iconColor} hover:text-white-700 dark:hover:text-black-700`}
                 aria-label="Close alert"
               >
                 <Close className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
           </div>
         );

@@ -2,6 +2,43 @@ import { useRef, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 import type { CheckboxProps } from "./types";
 
+/**
+ * A checkbox input component with optional label and indeterminate state support.
+ *
+ * @component
+ * @example
+ * // Basic checkbox
+ * <Checkbox
+ *   checked={isChecked}
+ *   onChange={(e) => setIsChecked(e.target.checked)}
+ *   label="Accept terms and conditions"
+ * />
+ *
+ * @example
+ * // Indeterminate checkbox (e.g., for "select all")
+ * <Checkbox
+ *   checked={someSelected}
+ *   indeterminate={someSelected && !allSelected}
+ *   onChange={handleSelectAll}
+ *   label="Select all"
+ * />
+ *
+ * @example
+ * // Checkbox without label
+ * <Checkbox
+ *   checked={value}
+ *   onChange={(e) => setValue(e.target.checked)}
+ *   aria-label="Toggle option"
+ * />
+ *
+ * @param {CheckboxProps} props - The component props
+ * @param {ReactNode} [props.label] - Optional label text displayed next to the checkbox
+ * @param {string} [props.className=""] - Additional CSS classes for the container
+ * @param {boolean} [props.indeterminate=false] - Whether the checkbox is in indeterminate state
+ * @param {boolean} [props.checked] - Whether the checkbox is checked (controlled)
+ * @param {...InputHTMLAttributes} props.rest - All standard HTML input attributes except 'type'
+ * @returns {JSX.Element} A checkbox input with optional label
+ */
 const Checkbox = ({
   label,
   className = "",

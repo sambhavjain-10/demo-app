@@ -9,6 +9,34 @@ type ErrorStateProps = {
   className?: string;
 };
 
+/**
+ * A component for displaying error states with an optional retry action.
+ *
+ * @component
+ * @example
+ * // Basic error state
+ * <ErrorState
+ *   title="Something went wrong"
+ *   description="Please try again later."
+ * />
+ *
+ * @example
+ * // Error state with retry button
+ * <ErrorState
+ *   title="Failed to load data"
+ *   description="Unable to fetch the requested information."
+ *   onRetry={handleRetry}
+ *   actionLabel="Try Again"
+ * />
+ *
+ * @param {ErrorStateProps} props - The component props
+ * @param {string} [props.title="We couldn't load this data"] - The main error title
+ * @param {string} [props.description="Please retry in a moment."] - Additional error description
+ * @param {() => void} [props.onRetry] - Optional callback for retry action (shows retry button if provided)
+ * @param {string} [props.actionLabel="Retry"] - Label text for the retry button
+ * @param {string} [props.className=""] - Additional CSS classes for the container
+ * @returns {JSX.Element} An error state display with icon, message, and optional retry button
+ */
 const ErrorState = ({
   title = "We couldn't load this data",
   description = "Please retry in a moment.",
