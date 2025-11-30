@@ -1,6 +1,8 @@
 import { useMemo, useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { twMerge } from "tailwind-merge";
 import { Button, Search } from "@/components";
+import { Settings } from "@/icons";
 import { useSessions, useUsers, useBulkUpdateSessions } from "@/data-access";
 import { useSyncFilters, useLocalStorage } from "@/hooks";
 import { useAlerts } from "@/context/AlertsContext";
@@ -10,6 +12,7 @@ import SessionsFiltersPanel from "./components/FiltersPanel/FiltersPanel";
 import BulkFeedbackOverlay from "./components/BulkFeedbackOverlay/BulkFeedbackOverlay";
 import BulkFeedbackWarningModal from "./components/BulkFeedbackWarningModal/BulkFeedbackWarningModal";
 import FailedSessionsModal from "./components/FailedSessionsModal/FailedSessionsModal";
+import SessionDetailsModal from "./components/SessionDetailsModal/SessionDetailsModal";
 import {
   BASE_COLUMNS,
   DEFAULT_FILTERS,
@@ -111,6 +114,9 @@ const SessionsPage = () => {
   const [showFailedSessionsModal, setShowFailedSessionsModal] = useState(false);
   const [failedSessionIds, setFailedSessionIds] = useState<string[]>([]);
 
+  // Session details modal state
+  const [selectedSession, setSelectedSession] = useState<SessionTableRow | null>(null);
+
   const bulkUpdateMutation = useBulkUpdateSessions();
   const { showAlert } = useAlerts();
 
@@ -151,18 +157,6 @@ const SessionsPage = () => {
   //   reconnect: true,
   //   reconnectAttempts: 5,
   // });
-
-  // // Log socket state changes
-  // useEffect(() => {
-  //   console.log("WebSocket state:", socketState, "Connected:", isConnected);
-  // }, [socketState, isConnected]);
-
-  // // Log last message
-  // useEffect(() => {
-  //   if (lastMessage) {
-  //     console.log("Last WebSocket message:", lastMessage.data);
-  //   }
-  // }, [lastMessage]);
 
   const usersById = useMemo(() => {
     const map: Record<string, { name?: UserType["first_name"]; team?: UserType["team"] }> = {};
@@ -212,25 +206,9 @@ const SessionsPage = () => {
           aValue = a.score;
           bValue = b.score;
           break;
-        case "confidence":
-          aValue = a.metrics.confidence;
-          bValue = b.metrics.confidence;
-          break;
-        case "clarity":
-          aValue = a.metrics.clarity;
-          bValue = b.metrics.clarity;
-          break;
-        case "listening":
-          aValue = a.metrics.listening;
-          bValue = b.metrics.listening;
-          break;
         case "createdAt":
           aValue = new Date(a.created_at).getTime();
           bValue = new Date(b.created_at).getTime();
-          break;
-        case "duration":
-          aValue = a.duration;
-          bValue = b.duration;
           break;
         default:
           return 0;
@@ -346,12 +324,11 @@ const SessionsPage = () => {
 
     try {
       const response = await bulkUpdateMutation.mutateAsync({
-        session_ids: [...Array.from(selectedSessionIds), "1", "2"],
+        session_ids: Array.from(selectedSessionIds),
         feedback: bulkFeedback.trim(),
       });
 
       // Clear selection and feedback
-      const submittedIds = Array.from(selectedSessionIds);
       setSelectedSessionIds(new Set());
       setBulkFeedback("");
 
@@ -385,6 +362,10 @@ const SessionsPage = () => {
     setBulkFeedback("");
   };
 
+  const handleSessionClick = (session: SessionTableRow) => {
+    setSelectedSession(session);
+  };
+
   return (
     <section className="space-y-6">
       <header className="flex flex-col gap-4 rounded-3xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900 md:flex-row md:items-center md:justify-between">
@@ -404,16 +385,14 @@ const SessionsPage = () => {
             className="w-full sm:w-64"
           />
           <div className="flex gap-2">
-            <Button type="button" onClick={() => setIsSettingsOpen(true)}>
-              Settings
-            </Button>
             <Button
               type="button"
-              className={`px-5 py-2 text-sm font-semibold ${
+              theme="secondary"
+              className={twMerge(
                 isFiltersOpen || activeFilterCount > 0
                   ? "bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-200"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100"
-              }`}
+              )}
               onClick={() => setIsFiltersOpen((prev) => !prev)}
             >
               Filters
@@ -422,6 +401,9 @@ const SessionsPage = () => {
                   {activeFilterCount}
                 </span>
               )}
+            </Button>
+            <Button type="button" theme="secondary" onClick={() => setIsSettingsOpen(true)}>
+              <Settings className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -449,6 +431,7 @@ const SessionsPage = () => {
           onSelectAll={handleSelectAll}
           isAllSelected={isAllSelected}
           isIndeterminate={isIndeterminate}
+          onRowClick={handleSessionClick}
         />
         {isFiltersOpen && (
           <SessionsFiltersPanel
@@ -492,6 +475,12 @@ const SessionsPage = () => {
         failedSessionIds={failedSessionIds}
         sessions={orderedSessions.map((s) => ({ id: s.id, title: s.title }))}
         onClose={() => setShowFailedSessionsModal(false)}
+      />
+
+      <SessionDetailsModal
+        isOpen={Boolean(selectedSession)}
+        session={selectedSession}
+        onClose={() => setSelectedSession(null)}
       />
     </section>
   );

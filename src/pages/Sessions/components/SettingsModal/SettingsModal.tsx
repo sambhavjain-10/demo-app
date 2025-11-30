@@ -19,7 +19,7 @@ const SessionsSettingsModal = ({
 
   useEffect(() => {
     if (isOpen) {
-      setLocalPageSize(pageSize);
+      setLocalPageSize(pageSize); //eslint-disable-line
       setLocalVisibility(columnVisibility);
     }
   }, [isOpen, pageSize, columnVisibility]);
@@ -94,25 +94,27 @@ const SessionsSettingsModal = ({
             Columns
           </p>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            {columns.map((column) => {
-              const isChecked = localVisibility[column.key];
-              const disableToggle = isChecked && visibleCount === 1;
-              return (
-                <label
-                  key={column.key}
-                  className="flex cursor-pointer items-center gap-3 rounded-2xl border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-blue-400 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-500"
-                >
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    checked={isChecked}
-                    onChange={(event) => handleToggleColumn(column.key, event.target.checked)}
-                    disabled={disableToggle}
-                  />
-                  {column.label}
-                </label>
-              );
-            })}
+            {columns
+              .filter((column) => column.customizable)
+              .map((column) => {
+                const isChecked = localVisibility[column.key];
+                const disableToggle = isChecked && visibleCount === 1;
+                return (
+                  <label
+                    key={column.key}
+                    className="flex cursor-pointer items-center gap-3 rounded-2xl border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-blue-400 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-500"
+                  >
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      checked={isChecked}
+                      onChange={(event) => handleToggleColumn(column.key, event.target.checked)}
+                      disabled={disableToggle}
+                    />
+                    {column.label}
+                  </label>
+                );
+              })}
           </div>
         </div>
       </div>
